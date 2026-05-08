@@ -13,7 +13,7 @@ def marker(name, **context):
 
 with DAG(
     dag_id="dag_9",
-    schedule_interval="47 14 * * *",  
+    schedule_interval="15 15 * * *",  
     start_date=datetime(2026, 5, 8),
     catchup=False,
     default_args={"snowflake_conn_id": "harsh_conn", "retries": 1, "retry_delay_seconds": 5},
