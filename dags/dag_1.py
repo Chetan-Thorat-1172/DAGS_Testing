@@ -6,7 +6,7 @@ def choose_path(**context):
     run_id = context.get("run_id", "")
     return "fast_extract" if (sum(ord(c) for c in run_id) % 2 == 0) else "slow_extract"
 
-# Test
+# Test 
 def marker(name, **context):
     print(f"dag_1 marker: {name}")
 
