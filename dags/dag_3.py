@@ -1,25 +1,15 @@
 from datetime import datetime
 from dag_parser.dynamic.dag_context import DAG, PythonOperator, SnowflakeOperator, SmtpNotifier
 
-
-retry_notifier = SmtpNotifier(
-    to=["nemer33891@hacknapp.com"],
-    subject="dag_3 retry {{ dag_id }}.{{ task_id }} try={{ try_number }}",
-    html_content="<p>Retry event for dag_3</p>",
-)
-
-
 failure_notifier = SmtpNotifier(
-    to=["nemer33891@hacknapp.com"],
+    to=["Chetan.Thorat@Pibythree.com"],
     subject="dag_3 failure {{ dag_id }}.{{ task_id }}",
     html_content="<p>Failure event for dag_3</p>",
 )
 
 
 def flaky_once(**context):
-    if context["ti"].try_number < 2:
-        raise Exception("dag_3 flaky_once failure on first try")
-    print("dag_3 flaky_once recovered")
+    print("dag_3 flaky_once executed without retry")
 
 
 def marker(name, **context):
@@ -28,18 +18,17 @@ def marker(name, **context):
 
 with DAG(
     dag_id="dag_3",
-    schedule_interval="20 10 * * *",  
+    schedule_interval="35 14 * * *",
     start_date=datetime(2026, 5, 8),
     catchup=False,
     default_args={
         "snowflake_conn_id": "harsh_conn",
         "retries": 1,
         "retry_delay_seconds": 5,
-        "on_retry_callback": retry_notifier,
         "on_failure_callback": failure_notifier,
     },
     on_failure_callback=failure_notifier,
-    description="Load test DAG 3 with 15 tasks focused on retries and parallel joins",
+    description="Load test DAG 3 with 15 tasks focused on parallel joins",
 ) as dag:
     t01 = PythonOperator(task_id="start", python_callable=lambda **c: marker("start", **c))
     t02 = SnowflakeOperator(task_id="sp_precheck", sql="CALL TESTING.PI_FLOW_LOAD_TEST.SP_LT_SLEEP_2S('dag_3_precheck');")
