@@ -18,8 +18,8 @@ def marker(name, **context):
 
 with DAG(
     dag_id="dag_3",
-    schedule_interval="15 15 * * *",
-    start_date=datetime(2026, 5, 8),
+    schedule_interval="30 10 * * *",
+    start_date=datetime(2026, 5, 11),
     catchup=False,
     default_args={
         "snowflake_conn_id": "harsh_conn",
