@@ -55,7 +55,7 @@ def finalize(**context):
 with DAG(
     dag_id="child_dag",
     schedule_interval=None,
-    start_date=datetime(2026, 5, 11),
+    start_date=datetime(2026, 5, 13),
     catchup=False,
     description="Child DAG triggered by parent via TriggerDagRunOperator",
 ) as dag:

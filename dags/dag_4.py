@@ -26,8 +26,8 @@ def summarize(**context):
 
 with DAG(
     dag_id="dag_4",
-    schedule_interval="40 13 * * *",  
-    start_date=datetime(2026, 5, 11),
+    schedule_interval="15 16 * * *",  
+    start_date=datetime(2026, 5, 13),
     catchup=False,
     default_args={"snowflake_conn_id": "harsh_conn", "retries": 1, "retry_delay_seconds": 5},
     description="Load test DAG 4 with 18 tasks and param-driven quality branching",
