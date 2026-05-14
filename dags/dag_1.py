@@ -8,12 +8,12 @@ def choose_path(**context):
 
 # Test 
 def marker(name, **context):
-    print(f"dag_1 marker: {name}")
+    print(f"dag_1 marker: {name}") 
 
 
 with DAG(
     dag_id="dag_1",
-    schedule_interval="55 12 * * *",
+    schedule_interval="30 13 * * *",
     start_date=datetime(2026, 5, 14),
     catchup=False,
     default_args={"snowflake_conn_id": "harsh_conn", "retries": 1, "retry_delay_seconds": 5},
