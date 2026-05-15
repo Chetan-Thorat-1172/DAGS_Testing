@@ -27,7 +27,7 @@ LEVELS = {
 }
 
 
-def gen_single_task_dag(dag_id, schedule, sleep_secs):
+def gen_single_task_dag(dag_id, schedule, sleep_secs, max_active_runs=3):
     """Single task DAG — minimal overhead, tests scheduler + dispatch throughput."""
     cmd = f"echo done" if sleep_secs == 0 else f"sleep {sleep_secs} && echo done"
     return f'''from datetime import datetime
@@ -38,13 +38,14 @@ with DAG(
     schedule_interval="{schedule}",
     start_date=datetime(2026, 5, 14),
     catchup=False,
+    max_active_runs={max_active_runs},
     description="Load test: single task",
 ) as dag:
     t1 = BashOperator(task_id="run", bash_command="{cmd}")
 '''
 
 
-def gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs):
+def gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs, max_active_runs=3):
     """Linear chain DAG — tests dependency resolution with sequential tasks."""
     cmd = f"echo done" if sleep_secs == 0 else f"sleep {sleep_secs} && echo done"
     lines = [
@@ -56,6 +57,7 @@ def gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs):
         f'    schedule_interval="{schedule}",',
         '    start_date=datetime(2026, 5, 14),',
         '    catchup=False,',
+        f'    max_active_runs={max_active_runs},',
         '    description="Load test: chain",',
         ') as dag:',
     ]
@@ -71,7 +73,7 @@ def gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs):
     return "\n".join(lines) + "\n"
 
 
-def gen_diamond_dag(dag_id, schedule, num_tasks, sleep_secs):
+def gen_diamond_dag(dag_id, schedule, num_tasks, sleep_secs, max_active_runs=3):
     """Diamond DAG — fan-out from start, fan-in to end. Tests concurrent task execution."""
     cmd = f"echo done" if sleep_secs == 0 else f"sleep {sleep_secs} && echo done"
     middle_count = max(1, num_tasks - 2)
@@ -84,6 +86,7 @@ def gen_diamond_dag(dag_id, schedule, num_tasks, sleep_secs):
         f'    schedule_interval="{schedule}",',
         '    start_date=datetime(2026, 5, 14),',
         '    catchup=False,',
+        f'    max_active_runs={max_active_runs},',
         '    description="Load test: diamond",',
         ') as dag:',
         f'    start = BashOperator(task_id="start", bash_command="{cmd}")',
@@ -100,7 +103,7 @@ def gen_diamond_dag(dag_id, schedule, num_tasks, sleep_secs):
     return "\n".join(lines) + "\n"
 
 
-def generate_dags(output_dir, num_dags, num_tasks, schedule, shape, sleep_secs, prefix="lt"):
+def generate_dags(output_dir, num_dags, num_tasks, schedule, shape, sleep_secs, prefix="lt", max_active_runs=3):
     """Generate DAG files in the output directory."""
     os.makedirs(output_dir, exist_ok=True)
 
@@ -109,18 +112,18 @@ def generate_dags(output_dir, num_dags, num_tasks, schedule, shape, sleep_secs, 
         filename = os.path.join(output_dir, f"{dag_id}.py")
 
         if shape == "single" or num_tasks == 1:
-            content = gen_single_task_dag(dag_id, schedule, sleep_secs)
+            content = gen_single_task_dag(dag_id, schedule, sleep_secs, max_active_runs)
         elif shape == "chain":
-            content = gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs)
+            content = gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs, max_active_runs)
         elif shape == "diamond":
-            content = gen_diamond_dag(dag_id, schedule, num_tasks, sleep_secs)
+            content = gen_diamond_dag(dag_id, schedule, num_tasks, sleep_secs, max_active_runs)
         else:
-            content = gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs)
+            content = gen_chain_dag(dag_id, schedule, num_tasks, sleep_secs, max_active_runs)
 
         with open(filename, "w", encoding="utf-8") as f:
             f.write(content)
 
-    print(f"Generated {num_dags} DAGs in {output_dir} (shape={shape}, tasks={num_tasks}, schedule={schedule})")
+    print(f"Generated {num_dags} DAGs in {output_dir} (shape={shape}, tasks={num_tasks}, schedule={schedule}, max_active_runs={max_active_runs})")
 
 
 def clean_load_test_dags(dags_dir, prefix="lt"):
@@ -144,6 +147,7 @@ def main():
     parser.add_argument("--shape", type=str, default="chain",
                         choices=["single", "chain", "diamond"], help="DAG graph shape")
     parser.add_argument("--sleep", type=int, default=1, help="Sleep seconds per task")
+    parser.add_argument("--max-active-runs", type=int, default=3, help="max_active_runs per DAG (default: 3)")
     parser.add_argument("--output", type=str, default=None,
                         help="Output directory (default: ../dags)")
     parser.add_argument("--clean", action="store_true", help="Remove old load test DAGs first")
@@ -173,10 +177,10 @@ def main():
         cfg = LEVELS[args.level]
         print(f"Level {args.level}: {cfg['desc']}")
         generate_dags(dags_dir, cfg["dags"], cfg["tasks"], cfg["schedule"],
-                      cfg["shape"], cfg["sleep"])
+                      cfg["shape"], cfg["sleep"], max_active_runs=args.max_active_runs)
     elif args.dags:
         generate_dags(dags_dir, args.dags, args.tasks, args.schedule,
-                      args.shape, args.sleep)
+                      args.shape, args.sleep, max_active_runs=args.max_active_runs)
     else:
         parser.print_help()
 

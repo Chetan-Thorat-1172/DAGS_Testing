@@ -6,6 +6,7 @@ with DAG(
     schedule_interval="* * * * *",
     start_date=datetime(2026, 5, 14),
     catchup=False,
+    max_active_runs=3,
     description="Load test: chain",
 ) as dag:
     t1 = BashOperator(task_id="step_1", bash_command="sleep 2 && echo done")
