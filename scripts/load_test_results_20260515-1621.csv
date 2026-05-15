@@ -1,0 +1,5 @@
+timestamp,scheduler_cycle_avg_ms,worker_pool_size,active_tasks,dispatch_queue,db_open_conns,db_idle_conns,tasks_dispatched,tasks_completed,dispatch_overflow,dag_runs_created,dlq_inserted,goroutines,mem_alloc_mb,mem_sys_mb,cpu_seconds,resident_mem_mb,parse_failures,files_skipped
+2026-05-15 16:21:40,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
+2026-05-15 16:21:55,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
+2026-05-15 16:22:10,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
+2026-05-15 16:22:25,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A,N/A
