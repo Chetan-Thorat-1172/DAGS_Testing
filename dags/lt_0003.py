@@ -3,7 +3,7 @@ from dag_parser.dynamic.dag_context import DAG, BashOperator
 
 with DAG(
     dag_id="lt_0003",
-    schedule_interval="13 17 * * *",
+    schedule_interval="54 17 * * *",
     start_date=datetime(2026, 5, 15),
     catchup=False,
     max_active_runs=3,
