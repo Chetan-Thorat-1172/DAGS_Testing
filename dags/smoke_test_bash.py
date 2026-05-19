@@ -3,9 +3,10 @@ from datetime import datetime
 
 with DAG(
     dag_id="smoke_test_bash",
-    schedule_interval=None,
+    schedule_interval="* * * * *",
     start_date=datetime(2026, 5, 19),
     catchup=False,
+    max_active_runs=1,
     description="Single-task smoke test for deployment verification",
 ) as dag:
     task = BashOperator(
