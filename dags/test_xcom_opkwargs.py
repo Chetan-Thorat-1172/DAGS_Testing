@@ -12,7 +12,7 @@ Expected behavior:
   4. downstream_task receives multiplier=10 via op_kwargs (Bug #47)
 """
 
-from pi_flow import DAG, PythonOperator
+from dag_parser.dynamic.dag_context import DAG, PythonOperator
 from datetime import datetime
 
 
