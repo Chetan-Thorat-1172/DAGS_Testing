@@ -11,6 +11,22 @@ Flow:
 """
 from datetime import datetime
 
+
+def get_items():
+    """Returns a list that will be used for expansion."""
+    return ["alpha", "beta", "gamma"]
+
+
+def process_item(item):
+    """Each mapped instance receives one item from the list."""
+    return f"processed_{item}"
+
+
+def summarize(**context):
+    """Receives aggregated results from all mapped instances."""
+    return "all_done"
+
+
 dag = DAG(
     dag_id="test_task_mapping_literal",
     schedule_interval="@daily",
@@ -20,24 +36,11 @@ dag = DAG(
 )
 
 with dag:
-    def get_items():
-        """Returns a list that will be used for expansion."""
-        return ["alpha", "beta", "gamma"]
-
-    def process_item(item):
-        """Each mapped instance receives one item from the list."""
-        return f"processed_{item}"
-
-    def summarize(**context):
-        """Receives aggregated results from all mapped instances."""
-        return "all_done"
-
     get_items_task = PythonOperator(
         task_id="get_items",
         python_callable=get_items,
     )
 
-    # This creates a mapped task: 3 instances (one per item in the literal list)
     process_task = PythonOperator(
         task_id="process_item",
         python_callable=process_item,
