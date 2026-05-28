@@ -19,8 +19,9 @@ with DAG(
         external_task_id="load_complete",
         allowed_states=["success"],
         poke_interval=120,
-        timeout=3600,
+        timeout=10,
         mode="reschedule",
+        soft_fail=True,
     )
 
     aggregate = BashOperator(
