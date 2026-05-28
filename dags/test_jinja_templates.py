@@ -14,10 +14,7 @@ Expected:
 
 from datetime import datetime
 
-try:
-    from dag_parser.dynamic.dag_context import DAG, BashOperator, PythonOperator, task
-except (ImportError, NameError):
-    pass
+from dag_parser.dynamic.dag_context import DAG, BashOperator, PythonOperator, task
 
 
 def print_report(**kwargs):

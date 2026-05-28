@@ -16,10 +16,7 @@ Expected:
 
 from datetime import datetime
 
-try:
-    from dag_parser.dynamic.dag_context import DAG, PythonOperator, task, dag
-except (ImportError, NameError):
-    pass
+from dag_parser.dynamic.dag_context import DAG, PythonOperator, task, dag
 
 
 @dag(schedule=None, start_date=datetime(2026, 1, 1), catchup=False,
