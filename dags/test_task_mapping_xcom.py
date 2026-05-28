@@ -1,15 +1,12 @@
 """
 Test DAG: Task Mapping / .expand() — XCom Reference
-
-Validates:
-1. PythonOperator.expand() with XComArg resolves count from upstream output
-2. Dynamic N determined at runtime after upstream task completes
-3. .partial() + .expand() combination works (fixed + variable args)
-
-Flow:
-  generate_files → process_file.partial(prefix="out_").expand(filename=XComArg("generate_files"))
 """
 from datetime import datetime
+
+try:
+    from pi_flow import DAG, PythonOperator, XComArg
+except ImportError:
+    pass  # Worker import context
 
 
 def generate_files():
@@ -22,24 +19,26 @@ def process_file(filename, prefix="processed_"):
     return f"{prefix}{filename}"
 
 
-dag = DAG(
-    dag_id="test_task_mapping_xcom",
-    schedule_interval="@daily",
-    start_date=datetime(2026, 1, 1),
-    catchup=False,
-    description="Tests .expand() with XCom reference from upstream",
-)
-
-with dag:
-    generate_task = PythonOperator(
-        task_id="generate_files",
-        python_callable=generate_files,
+try:
+    dag = DAG(
+        dag_id="test_task_mapping_xcom",
+        schedule_interval="@daily",
+        start_date=datetime(2026, 1, 1),
+        catchup=False,
+        description="Tests .expand() with XCom reference from upstream",
     )
 
-    # partial_args: {"prefix": "out_"}, expand_args: XComArg reference
-    process_task = PythonOperator(
-        task_id="process_file",
-        python_callable=process_file,
-    ).partial(prefix="out_").expand(filename=XComArg("generate_files"))
+    with dag:
+        generate_task = PythonOperator(
+            task_id="generate_files",
+            python_callable=generate_files,
+        )
 
-    generate_task >> process_task
+        process_task = PythonOperator(
+            task_id="process_file",
+            python_callable=process_file,
+        ).partial(prefix="out_").expand(filename=XComArg("generate_files"))
+
+        generate_task >> process_task
+except NameError:
+    pass
