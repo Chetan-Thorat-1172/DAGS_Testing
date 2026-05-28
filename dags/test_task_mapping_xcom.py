@@ -11,6 +11,17 @@ Flow:
 """
 from datetime import datetime
 
+
+def generate_files():
+    """Upstream task returns a list — determines how many mapped instances to create."""
+    return ["data_2026_01.csv", "data_2026_02.csv", "data_2026_03.csv", "data_2026_04.csv"]
+
+
+def process_file(filename, prefix="processed_"):
+    """Each mapped instance processes one file with the fixed prefix from .partial()."""
+    return f"{prefix}{filename}"
+
+
 dag = DAG(
     dag_id="test_task_mapping_xcom",
     schedule_interval="@daily",
@@ -20,14 +31,6 @@ dag = DAG(
 )
 
 with dag:
-    def generate_files():
-        """Upstream task returns a list — determines how many mapped instances to create."""
-        return ["data_2026_01.csv", "data_2026_02.csv", "data_2026_03.csv", "data_2026_04.csv"]
-
-    def process_file(filename, prefix="processed_"):
-        """Each mapped instance processes one file with the fixed prefix from .partial()."""
-        return f"{prefix}{filename}"
-
     generate_task = PythonOperator(
         task_id="generate_files",
         python_callable=generate_files,
