@@ -1,6 +1,7 @@
 """
 Test DAG: TimeSensor in reschedule mode.
-Waits until 09:00 before running downstream tasks.
+Waits until 15:59 before running downstream tasks.
+Uses short poke_interval (30s) to demonstrate reschedule behavior.
 """
 from datetime import datetime
 
@@ -13,17 +14,17 @@ with DAG(
     catchup=False,
 ) as dag:
 
-    wait_until_9am = TimeSensor(
-        task_id="wait_until_9am",
-        target_time="09:00",
-        poke_interval=60,
-        timeout=14400,
+    wait_for_time = TimeSensor(
+        task_id="wait_for_time",
+        target_time="15:59",
+        poke_interval=30,
+        timeout=600,
         mode="reschedule",
     )
 
     run_report = BashOperator(
         task_id="run_report",
-        bash_command="echo 'It is 9am, running report...'",
+        bash_command="echo 'Target time reached, running report...'",
     )
 
-    wait_until_9am >> run_report
+    wait_for_time >> run_report
