@@ -1,7 +1,7 @@
 """
 Test DAG: Dataset Consumer (Session 49 - Dataset-Driven Scheduling)
 Auto-triggered when the producer DAG emits a dataset event for test://sales_table.
-No cron schedule - only runs when dataset is updated.
+No cron schedule - only runs when dataset is updated. v2
 """
 from dag_parser.dynamic.dag_context import DAG, BashOperator, Dataset
 from datetime import datetime

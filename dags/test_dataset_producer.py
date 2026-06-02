@@ -1,7 +1,7 @@
 """
 Test DAG: Dataset Producer (Session 49 - Dataset-Driven Scheduling)
 Produces a dataset event when its task completes successfully.
-The consumer DAG (test_dataset_consumer) should auto-trigger.
+The consumer DAG (test_dataset_consumer) should auto-trigger. v2
 """
 from dag_parser.dynamic.dag_context import DAG, BashOperator, Dataset
 from datetime import datetime
