@@ -2,7 +2,7 @@
 Test DAG: Scheduling Features (Session 48)
 Tests: trigger rules, weight rules, wait_for_downstream, per-task SLA
 """
-from piflow import DAG, PythonOperator, BashOperator
+from dag_parser.dynamic.dag_context import DAG, PythonOperator, BashOperator
 
 dag = DAG(
     "test_scheduling_features",
