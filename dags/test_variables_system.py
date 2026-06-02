@@ -2,7 +2,7 @@
 Test DAG: Variables System (Session 49)
 Tests: {{ .Var.key }} template rendering in task params
 """
-from dag_parser.dynamic.dag_context import DAG, PythonOperator, BashOperator
+from dag_parser.dynamic.dag_context import DAG, BashOperator
 from datetime import datetime
 
 with DAG(
@@ -10,28 +10,21 @@ with DAG(
     schedule_interval=None,
     start_date=datetime(2026, 6, 1),
     catchup=False,
-    description="Tests PI-FLOW variables template rendering ({{ .Var.key }})",
+    description="Tests PI-FLOW variables template rendering",
     tags=["test", "variables"],
 ) as dag:
 
     # Task 1: BashOperator using variable in bash_command
+    # {{ .Var.test_var }} should resolve to the value from the variables table
     bash_with_var = BashOperator(
         task_id="bash_echo_var",
-        bash_command="echo 'Environment is: {{ .Var.test_var }}' && echo 'DAG: {{ .DagID }}'",
+        bash_command="echo 'Variable value: {{ .Var.test_var }}' && echo 'DagID: {{ .DagID }}'",
     )
 
-    # Task 2: PythonOperator using variable in op_kwargs
-    def print_variable(**kwargs):
-        var_value = kwargs.get("injected_var", "NOT_RESOLVED")
-        print(f"Variable value received: {var_value}")
-        if var_value == "NOT_RESOLVED" or var_value == "{{ .Var.test_var }}":
-            raise Exception(f"Variable was not resolved! Got: {var_value}")
-        return var_value
-
-    python_with_var = PythonOperator(
-        task_id="python_check_var",
-        python_callable="print_variable",
-        op_kwargs={"injected_var": "{{ .Var.test_var }}"},
+    # Task 2: Verify the variable was actually resolved (not left as template literal)
+    verify_var = BashOperator(
+        task_id="verify_resolved",
+        bash_command="VAL='{{ .Var.test_var }}' && if [ \"$VAL\" = '{{ .Var.test_var }}' ]; then echo 'FAIL: variable not resolved'; exit 1; fi && echo 'PASS: resolved to '$VAL",
     )
 
-    bash_with_var >> python_with_var
+    bash_with_var >> verify_var
