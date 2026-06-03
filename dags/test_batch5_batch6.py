@@ -79,14 +79,28 @@ def xcom_producer(**kwargs):
     return result
 
 
+def _deserialize_xcom(val):
+    """XCom values are stored as JSON — deserialize string values."""
+    import json
+    if val is None:
+        return None
+    if isinstance(val, str):
+        try:
+            return json.loads(val)
+        except (json.JSONDecodeError, TypeError):
+            return val
+    return val
+
+
 def xcom_consumer(**kwargs):
     """Pulls XCom values from producer to validate end-to-end flow."""
     ti = kwargs.get("ti")
     ds = kwargs.get("ds", "unknown")
 
     # Pull the explicit push
-    test_val = ti.xcom_pull(task_ids="xcom_producer", key="test_key")
-    print(f"[consumer] Pulled test_key from xcom_producer: {test_val}")
+    raw_val = ti.xcom_pull(task_ids="xcom_producer", key="test_key")
+    test_val = _deserialize_xcom(raw_val)
+    print(f"[consumer] Pulled test_key from xcom_producer: raw={raw_val!r}, parsed={test_val!r}")
     if test_val is None:
         raise ValueError("xcom_pull returned None for test_key — XCom backend broken!")
 
@@ -95,8 +109,9 @@ def xcom_consumer(**kwargs):
         raise ValueError(f"XCom mismatch: got '{test_val}', expected '{expected}'")
 
     # Pull auto-pushed return_value
-    return_val = ti.xcom_pull(task_ids="xcom_producer", key="return_value")
-    print(f"[consumer] Pulled return_value from xcom_producer: {return_val}")
+    raw_return = ti.xcom_pull(task_ids="xcom_producer", key="return_value")
+    return_val = _deserialize_xcom(raw_return)
+    print(f"[consumer] Pulled return_value from xcom_producer: raw={raw_return!r}, parsed={return_val!r}")
     if return_val is None:
         raise ValueError("xcom_pull returned None for return_value — auto-push broken!")
 
