@@ -34,7 +34,7 @@ def task_that_succeeds(**kwargs):
 
 with DAG(
     dag_id="test_batch8_callbacks",
-    schedule_interval=None,  # Manual trigger only
+    schedule_interval="@once",  # Auto-trigger once for testing
     start_date=datetime(2026, 1, 1),
     catchup=False,
     description="E2E test for Batch 8: Task-Level Callbacks (#21) + Alerting Beyond Email (#12)",
