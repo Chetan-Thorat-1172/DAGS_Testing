@@ -3,7 +3,7 @@ from datetime import datetime
 
 with DAG(
     dag_id="smoke_test_bash",
-    schedule_interval="52 12 * * *",
+    schedule_interval="0 15 * * *",
     start_date=datetime(2026, 6, 9),
     catchup=False,
     description="Single-task smoke test for deployment verification",
