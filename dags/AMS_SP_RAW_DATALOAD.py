@@ -12,5 +12,5 @@ with DAG(
 
     t01 = SnowflakeOperator(task_id="TS_LOAD_SP_DATA", sql="CALL TESTING.PI_FLOW_LOAD_TEST.SP_LT_SLEEP_2S('ams_cms_load_move_count');")
 
-    # Dependencies:
+    # Dependencies:  t01
     t01
