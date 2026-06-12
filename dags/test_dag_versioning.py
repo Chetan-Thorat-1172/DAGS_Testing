@@ -17,8 +17,8 @@ from dag_parser.dynamic.dag_context import DAG, BashOperator, PythonOperator
 # ========================================
 # VERSION MARKER - Change this to test versioning
 # ========================================
-DAG_VERSION = "v1.0.0"
-TASK_MESSAGE = "Hello from version 1.0.0"
+DAG_VERSION = "v2.0.0"
+TASK_MESSAGE = "Hello from version 2.0.0 - UPDATED!"
 
 
 def print_version_info():
