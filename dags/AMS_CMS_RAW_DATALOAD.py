@@ -1,11 +1,6 @@
 from datetime import datetime
 from dag_parser.dynamic.dag_context import DAG, PythonOperator, SnowflakeOperator
 
-
-def marker(label, **context):
-    print(f"[AMS_CMS_RAW_DATALOAD] {label} executed at {datetime.now()}")
-
-
 with DAG(
     dag_id="AMS_CMS_RAW_DATALOAD",
     schedule_interval=None,
