@@ -2,7 +2,7 @@ from datetime import datetime
 from dag_parser.dynamic.dag_context import DAG, PythonOperator, SnowflakeOperator
 
 with DAG(
-    dag_id="AMS_CMS_RAW_DATALOAD",
+    dag_id="AMS_VOYAGER_RAW_DATALOAD",
     schedule_interval=None,
     start_date=datetime(2026, 6, 12),
     catchup=False,
