@@ -12,5 +12,5 @@ with DAG(
 
     t01 = SnowflakeOperator(task_id="TS_EXECUTE_AMS_DBT_PR", sql="EXECUTE DBT PROJECT TESTING.PI_FLOW_LOAD_TEST.AMS_DBT_PROJECT ARGS = 'run';")
 
-    # Dependencies:
+    # Dependencies:  t01
     t01
