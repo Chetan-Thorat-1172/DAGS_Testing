@@ -12,19 +12,24 @@ To verify DST handling in production, check:
 - No duplicate DAG runs for the same wall-clock time
 """
 
-from datetime import datetime, timedelta
-from airflow import DAG
-from airflow.operators.python import PythonOperator
+from datetime import datetime
+from dag_parser.dynamic.dag_context import DAG, PythonOperator
+
 
 def print_execution_info(**context):
     """Print execution date info for verification."""
-    exec_date = context['execution_date']
+    exec_date = context.get('execution_date')
+    run_id = context.get('run_id', 'unknown')
+    print(f"Run ID: {run_id}")
     print(f"Execution Date: {exec_date}")
-    print(f"Execution Date ISO: {exec_date.isoformat()}")
-    print(f"Timezone: {exec_date.tzinfo}")
-    print(f"UTC Offset: {exec_date.strftime('%z')}")
-    print(f"Wall Clock: {exec_date.strftime('%Y-%m-%d %H:%M:%S')}")
-    return f"Executed at wall-clock {exec_date.strftime('%H:%M:%S')}"
+    if exec_date:
+        print(f"Execution Date ISO: {exec_date.isoformat()}")
+        print(f"Timezone: {getattr(exec_date, 'tzinfo', 'N/A')}")
+        if hasattr(exec_date, 'strftime'):
+            print(f"UTC Offset: {exec_date.strftime('%z')}")
+            print(f"Wall Clock: {exec_date.strftime('%Y-%m-%d %H:%M:%S')}")
+    return f"Executed run_id={run_id}"
+
 
 with DAG(
     dag_id='test_dst_timezone',
