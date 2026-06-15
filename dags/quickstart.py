@@ -4,7 +4,7 @@ from dag_parser.dynamic.dag_context import DAG, PythonOperator, BashOperator
 with DAG(
     dag_id="hello_piflow",
     schedule="@daily",
-    start_date=datetime(2026, 1, 1),
+    start_date=datetime(2026, 6, 15),
     catchup=False,
     tags=["tutorial"],
 ) as dag:
