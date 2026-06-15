@@ -15,3 +15,6 @@ with DAG(
 
     hello = PythonOperator(task_id="hello", python_callable=say_hello)
     done = BashOperator(task_id="done", bash_command="echo finished")
+
+
+    hello >> done("on success") >> success_task
