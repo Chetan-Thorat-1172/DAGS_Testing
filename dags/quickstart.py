@@ -1,10 +1,10 @@
 from datetime import datetime
-from dag_parser.dynamic.operators import PythonOperator, BashOperator
+from dag_parser.dynamic.dag_context import DAG, PythonOperator, BashOperator
 
 with DAG(
     dag_id="hello_piflow",
     schedule="@daily",
-    start_date=datetime(2026, 6, 15),
+    start_date=datetime(2026, 1, 1),
     catchup=False,
     tags=["tutorial"],
 ) as dag:
@@ -15,5 +15,3 @@ with DAG(
 
     hello = PythonOperator(task_id="hello", python_callable=say_hello)
     done = BashOperator(task_id="done", bash_command="echo finished")
-
-    hello >> done
