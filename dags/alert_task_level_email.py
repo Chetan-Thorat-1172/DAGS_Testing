@@ -23,7 +23,7 @@ with DAG(
         task_id="ok_task",
         bash_command="echo success path",
         on_success_callback=SmtpNotifier(
-            to=["alerts@example.com"],
+            to=["Chetan.Thorat@Pibythree.com"],
             subject="[PiFlow] task {{ task_id }} succeeded",
             html_content="Task {{ task_id }} in {{ dag_id }} succeeded (run {{ run_id }}).",
         ),
@@ -33,7 +33,7 @@ with DAG(
         task_id="fail_task",
         bash_command="echo failing now && exit 1",
         on_failure_callback=SmtpNotifier(
-            to=["alerts@example.com"],
+            to=["Chetan.Thorat@Pibythree.com"],
             subject="[PiFlow] task {{ task_id }} FAILED",
             html_content="Task {{ task_id }} in {{ dag_id }} failed (run {{ run_id }}).",
         ),
