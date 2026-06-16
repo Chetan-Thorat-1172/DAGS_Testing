@@ -33,11 +33,22 @@ with DAG(
         return {"rows": 100, "source": "api"}
 
     def consume(**context):
+        import json
         ti = context["ti"]
 
         # Pull the upstream task's return_value
         data = ti.xcom_pull(task_ids="producer", key="return_value")
-        print(f"Pulled from producer: {data}")
+        print(f"Raw pulled value: {data} (type: {type(data).__name__})")
+
+        # IMPORTANT: XCom values may come back as a JSON string rather than a
+        # parsed dict. This happens because the value goes through double
+        # serialization: Python dict -> json.dumps (in _run_task.py) -> stored
+        # as JSONB text -> retrieved as string -> json.loads may or may not
+        # fully unpack it. Always defensively parse.
+        if isinstance(data, str):
+            data = json.loads(data)
+
+        print(f"Parsed value: {data} (type: {type(data).__name__})")
 
         if data is None:
             raise ValueError("xcom_pull returned None — XCom not found!")
