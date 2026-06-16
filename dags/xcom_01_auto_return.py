@@ -37,6 +37,6 @@ with DAG(
         """This return value is automatically pushed to XCom as 'return_value'."""
         result = {"rows": 100, "source": "api", "status": "ok"}
         print(f"Producing: {result}")
-        return result  # ← this gets auto-pushed to xcom
+        return result  # this gets auto-pushed to xcom
 
     producer = PythonOperator(task_id="producer", python_callable=produce_data)
