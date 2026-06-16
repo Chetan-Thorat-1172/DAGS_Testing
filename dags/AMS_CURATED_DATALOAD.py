@@ -6,11 +6,11 @@ with DAG(
     schedule_interval=None,
     start_date=datetime(2026, 6, 12),
     catchup=False,
-    default_args={"snowflake_conn_id": "svc_pi_flow_conn", "retries": 1, "retry_delay_seconds": 5},
+    default_args={"snowflake_conn_id": "Ram_SF_Conn", "retries": 1, "retry_delay_seconds": 5},
     description="AMS Daily Raw to Curated Data Load",
 ) as dag:
 
-    t01 = SnowflakeOperator(task_id="TS_EXECUTE_AMS_DBT_PR", sql="EXECUTE DBT PROJECT TESTING.PI_FLOW_LOAD_TEST.AMS_DBT_PROJECT ARGS = 'run';")
+    t01 = SnowflakeOperator(task_id="TS_EXECUTE_AMS_DBT_PR", sql="EXECUTE DBT PROJECT AMS_POC.CMS.AMS ARGS = 'run';")
 
     # Dependencies:  t01
     t01
