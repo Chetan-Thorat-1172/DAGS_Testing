@@ -37,7 +37,8 @@ with DAG(
     def read_bash_output(**context):
         ti = context["ti"]
         value = ti.xcom_pull(task_ids="bash_producer", key="return_value")
-        cleaned = value.strip() if value else None
+        # BashOperator stdout comes as a plain string — strip trailing newline
+        cleaned = value.strip() if isinstance(value, str) else str(value).strip()
         print(f"Bash produced: '{cleaned}'")
 
         if cleaned != "hello from bash":
