@@ -35,7 +35,7 @@ with DAG(
     # Step 1 — the actual work task (intentionally fails to test failure email)
     do_work = BashOperator(
         task_id="do_work",
-        bash_command="echo starting work && exit 1",   # change to 'echo ok' to test success path
+        bash_command="echo ok",   # change to 'echo ok' to test success path (echo starting work && exit 1)
     )
 
     # Step 2a — email fired ONLY when do_work (or any upstream) fails
