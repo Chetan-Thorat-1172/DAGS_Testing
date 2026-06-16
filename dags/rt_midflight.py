@@ -21,7 +21,7 @@ def ok(**context):
 
 def slow(**context):
     import time
-    time.sleep(60)
+    time.sleep(150)
     return "slow_done"
 
 
