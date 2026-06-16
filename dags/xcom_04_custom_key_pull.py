@@ -33,9 +33,19 @@ with DAG(
         return "producer done"
 
     def consume(**context):
+        import json
         ti = context["ti"]
         batch = ti.xcom_pull(task_ids="producer", key="batch_id")
         count = ti.xcom_pull(task_ids="producer", key="row_count")
+
+        # Defensively parse — values may arrive as JSON strings
+        if isinstance(batch, str):
+            try: batch = json.loads(batch)
+            except: pass
+        if isinstance(count, str):
+            try: count = json.loads(count)
+            except: pass
+
         print(f"Got batch_id: {batch}")
         print(f"Got row_count: {count}")
 
