@@ -11,6 +11,6 @@ with DAG(
     schedule_interval=None,
     timetable="last_day_of_month",
     start_date=datetime(2026, 5, 1),
-    catchup=False,
+    catchup=True,
 ) as dag:
     BashOperator(task_id="run", bash_command="echo 'Last day of month run: {{ .DS }}'")
