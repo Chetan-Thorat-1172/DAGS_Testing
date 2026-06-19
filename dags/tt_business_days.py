@@ -12,6 +12,6 @@ with DAG(
     schedule_interval=None,
     timetable="business_days",
     start_date=datetime(2026, 6, 18),
-    catchup=False,
+    catchup=True,
 ) as dag:
     BashOperator(task_id="run", bash_command="echo 'Business day run: {{ .DS }}'")
