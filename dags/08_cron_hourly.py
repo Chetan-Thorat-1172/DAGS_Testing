@@ -6,6 +6,6 @@ with DAG(
     dag_id="cron_hourly",
     schedule_interval="@hourly",
     start_date=datetime(2026, 6, 22),
-    catchup=False,
+    catchup=True,
 ) as dag:
     BashOperator(task_id="hourly_task", bash_command="echo 'Hourly run at {{ .TS }}'")
