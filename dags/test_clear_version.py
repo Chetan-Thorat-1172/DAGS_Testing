@@ -11,12 +11,17 @@ with DAG(
 
     t1 = BashOperator(
         task_id="step1",
-        bash_command="echo 'V1 step1'",
+        bash_command="echo 'V2 step1'",
     )
 
     t2 = BashOperator(
         task_id="step2",
-        bash_command="echo 'V1 step2'",
+        bash_command="echo 'V2 step2'",
     )
 
-    t1 >> t2
+    t3 = BashOperator(
+        task_id="step3",
+        bash_command="echo 'V2 new task'",
+    )
+
+    t1 >> t2 >> t3
