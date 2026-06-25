@@ -1,6 +1,6 @@
 from datetime import datetime
 from dag_parser.dynamic.dag_context import DAG, BashOperator
-
+# test
 with DAG(
     dag_id="test_trigger_rules",
     schedule_interval="@once",
