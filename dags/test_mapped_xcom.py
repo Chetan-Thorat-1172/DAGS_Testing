@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from dag_parser.dynamic.dag_context import DAG, PythonOperator
 
 
@@ -9,7 +10,6 @@ def process_item(item, **kwargs):
 def aggregate_all(**kwargs):
     ti = kwargs["ti"]
 
-    # Pull all mapped indices from process_item
     all_results = ti.xcom_pull(
         task_ids="t_mapped",
         key="return_value",
@@ -32,10 +32,10 @@ with DAG(
             python_callable=process_item,
         )
         .expand(
-            op_args=[
-                ["apple"],
-                ["banana"],
-                ["cherry"],
+            op_kwargs=[
+                {"item": "apple"},
+                {"item": "banana"},
+                {"item": "cherry"},
             ]
         )
     )
