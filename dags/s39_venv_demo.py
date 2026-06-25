@@ -1,5 +1,6 @@
 from datetime import datetime
 
+# S39 PythonVirtualenvOperator managed-env live proof (py11 parser fix).
 from dag_parser.dynamic.dag_context import DAG, PythonVirtualenvOperator
 
 
