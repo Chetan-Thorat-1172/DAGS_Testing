@@ -9,9 +9,9 @@ with DAG(
     catchup=False,
 ) as dag:
 
-    wait_for_api = HttpSensor(
+     HttpSensor(
         task_id="wait_for_api",
-        endpoint="https://httpstat.us/200",
+        endpoint="http://localhost:8083/health",
         method="GET",
         poke_interval=10,
         timeout=60,
