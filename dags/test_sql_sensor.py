@@ -11,7 +11,7 @@ with DAG(
 
     wait_for_data = SqlSensor(
         task_id="wait_for_flag",
-        sql="SELECT 1 FROM variable WHERE key = 'sensor_test_flag'",
+        sql="SELECT 1 FROM variable WHERE key = 'sensor_test_fla'",
         poke_interval=10,
         timeout=120,
         mode="poke",
