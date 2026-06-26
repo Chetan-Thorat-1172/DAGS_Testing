@@ -11,7 +11,7 @@ with DAG(
 
      HttpSensor(
         task_id="wait_for_api",
-        endpoint="Postman-echo.com/get",
+        endpoint="https://www.google.com/favicon.ico",
         method="GET",
         poke_interval=10,
         timeout=60,
