@@ -11,7 +11,7 @@ with DAG(
 
     wait_for_time = TimeSensor(
         task_id="wait_until",
-        target_time="09:04",  # UTC (6 minutes after 08:58)
+        target_time="14:40",  # UTC (6 minutes after 08:58)
         poke_interval=10,
         timeout=520,  # 7 minutes
         mode="poke",
