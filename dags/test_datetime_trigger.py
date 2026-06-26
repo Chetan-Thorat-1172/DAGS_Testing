@@ -23,7 +23,7 @@ def start_and_defer(**kwargs):
 
     raise TaskDeferred(
         trigger=DateTimeTrigger(
-            moment="2026-06-26T15:29:00Z",  # Replace with the desired UTC datetime
+            moment="2026-06-26T10:07:00Z",  # Replace with the desired UTC datetime
         ),
         method_name="execute_complete",
         timeout=300,
