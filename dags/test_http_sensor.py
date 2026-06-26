@@ -11,7 +11,7 @@ with DAG(
 
      HttpSensor(
         task_id="wait_for_api",
-        endpoint="https://www.google.com/favicon.ico",
+        endpoint="http://localhost:8083/api/health",
         method="GET",
         poke_interval=10,
         timeout=60,
