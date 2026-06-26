@@ -11,7 +11,7 @@ with DAG(
 
      HttpSensor(
         task_id="wait_for_api",
-        endpoint="http://localhost:8083/health",
+        endpoint="Postman-echo.com/get",
         method="GET",
         poke_interval=10,
         timeout=60,
