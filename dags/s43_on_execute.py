@@ -20,13 +20,17 @@ from datetime import datetime
 
 from dag_parser.dynamic.dag_context import DAG, PythonOperator
 
+# NOTE: callback body is deliberately STATIC (no {{ }}). PI-FLOW renders task
+# params through Go's template engine BEFORE dispatch, and a Jinja-style
+# {{dag_id}} is parsed as a Go-template function call -> the task fails to
+# render. The on_execute_callback row enqueue does not depend on body content.
 ON_EXECUTE = {
     "on_execute_callback": {
         "type": "http_webhook",
         "url": "https://httpbin.org/post",
         "method": "POST",
         "headers": {"Content-Type": "application/json"},
-        "body": "{\"dag_id\": \"{{dag_id}}\", \"task_id\": \"{{task_id}}\", \"run_id\": \"{{run_id}}\", \"event\": \"{{event}}\"}",
+        "body": "{\"event\": \"on_execute\"}",
     }
 }
 
@@ -45,7 +49,7 @@ def fail_then_succeed(**context):
 
 
 with DAG(
-    dag_id="s43_on_execute",
+    dag_id="s43_on_execute2",
     schedule_interval="@once",
     start_date=datetime(2026, 6, 29),
     catchup=False,
