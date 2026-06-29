@@ -12,7 +12,7 @@ with DAG(
     start_date=datetime(2026, 6, 29),
     catchup=False,
     description="L3-SF-01 proof: generic SQL family (Postgres) is now authorable + runnable",
-):
+) as dag:
     PostgresOperator(
         task_id="pg_select",
         sql="SELECT 42 AS answer",

@@ -13,7 +13,7 @@ with DAG(
     start_date=datetime(2026, 6, 29),
     catchup=False,
     description="L3-SF-01 proof: generic SQLExecuteQueryOperator -> SnowflakeExecutor delegation",
-):
+) as dag:
     SQLExecuteQueryOperator(
         task_id="sf_select",
         sql="SELECT 7 AS sf_answer",
