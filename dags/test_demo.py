@@ -9,11 +9,11 @@ with DAG(
 ) as dag:
 
     t_1 = BashOperator(
-        task_id="t_long",
+        task_id="t_1",
         bash_command="slep 90",
     )
     t_2 = BashOperator(
-            task_id="t_long",
+            task_id="t_2",
             bash_command="sleep 10",
             retries=1,
             retry_delay_seconds=5,
