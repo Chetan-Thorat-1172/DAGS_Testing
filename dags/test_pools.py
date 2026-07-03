@@ -1,13 +1,11 @@
 from datetime import datetime
-
 from dag_parser.dynamic.dag_context import DAG, BashOperator
-
 
 with DAG(
     dag_id="test_pools",
-    schedule_interval=None,
+    schedule_interval="@daily",
     start_date=datetime(2026, 7, 2),
-    catchup=False,
+    catchup=True,
 ) as dag:
     t1 = BashOperator(
         task_id="t1",
