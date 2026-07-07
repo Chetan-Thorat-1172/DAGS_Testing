@@ -16,7 +16,7 @@ with DAG(
 
     do_work = BashOperator(
         task_id="do_work",
-        bash_command="echo 'doing work...' && exit 1",
+        bash_command="echo 'doing work...' && exit 0",
     )
 
     slack_failure = SlackAPIPostOperator(
