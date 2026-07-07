@@ -14,11 +14,6 @@ with DAG(
         to=["Chetan.Thorat@Pibythree.com"],
         subject="PI-FLOW Email Test",
         html_content=(
-            "<h2>Hello from PI-FLOW!</h2>"
-            "<p>"
-            "DAG: {{ dag_id }}<br>"
-            "Run: {{ run_id }}<br>"
-            "Task: {{ task_id }}"
-            "</p>"
+            "<h2>Hello from PI-FLOW!</h2><p>This is a test email sent by EmailOperator.</p>"
         ),
     )
