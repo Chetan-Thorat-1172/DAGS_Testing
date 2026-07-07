@@ -19,7 +19,7 @@ with DAG(
     catchup=False,
     on_failure_callback=SmtpNotifier(
         to=["Chetan.Thorat@Pibythree.com"],
-        subject="DAG {{dag_id}} FAILED",
+        subject="DAG test_callbacks FAILED",
     ),
 ) as dag:
 
@@ -28,7 +28,7 @@ with DAG(
         python_callable=succeed_task,
         on_success_callback=SmtpNotifier(
             to=["Chetan.Thorat@Pibythree.com"],
-            subject="Task {{task_id}} succeeded in {{dag_id}}",
+            subject="Task t_success succeeded",
         ),
     )
 
@@ -39,11 +39,11 @@ with DAG(
         retry_delay_seconds=5,
         on_failure_callback=SmtpNotifier(
             to=["Chetan.Thorat@Pibythree.com"],
-            subject="Task {{task_id}} FAILED in {{dag_id}}",
+            subject="Task t_fail FAILED",
         ),
         on_retry_callback=SmtpNotifier(
             to=["Chetan.Thorat@Pibythree.com"],
-            subject="Task {{task_id}} retrying in {{dag_id}}",
+            subject="Task t_fail Retrying",
         ),
     )
 
