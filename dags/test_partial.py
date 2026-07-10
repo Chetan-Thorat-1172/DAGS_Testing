@@ -1,18 +1,9 @@
 from datetime import datetime
 from dag_parser.dynamic.dag_context import DAG, PythonOperator, BashOperator
 
-def process_item(op_kwargs=None, **kwargs):
-    item = op_kwargs.get("item", "unknown")
-    mode = op_kwargs.get("mode", "unknown")
-    retries = op_kwargs.get("max_retries", 0)
-
-    print(
-        f"Processing: {item}, mode={mode}, max_retries={retries}",
-        flush=True,
-    )
-
-    return f"{item}_{mode}_{retries}"
-
+def process_item(item, mode, max_retries, **kwargs):
+    print(f"Processing: {item}, mode={mode}, max_retries={max_retries}", flush=True)
+    return f"{item}_{mode}_{max_retries}"
 
 with DAG(
     dag_id="test_partial",
