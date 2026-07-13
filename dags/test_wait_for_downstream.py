@@ -3,7 +3,7 @@ from dag_parser.dynamic.dag_context import DAG, BashOperator
 
 with DAG(
     dag_id="test_wait_for_downstream",
-    schedule_interval="@daily",
+    schedule_interval=None,
     start_date=datetime(2026, 7, 5),
     catchup=True,
 ) as dag:
