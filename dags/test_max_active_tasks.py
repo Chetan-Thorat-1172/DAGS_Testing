@@ -3,7 +3,7 @@ from dag_parser.dynamic.dag_context import DAG, BashOperator
 
 with DAG(
     dag_id="test_max_active_tasks",
-    schedule_interval=None,
+    schedule_interval=@daily,
     start_date=datetime(2026, 7, 10),
     catchup=True,
     max_active_tasks=2,
