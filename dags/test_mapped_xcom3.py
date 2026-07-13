@@ -21,7 +21,7 @@ def aggregate_all(**kwargs):
 
 with DAG(
     dag_id="test_mapped_xcom3",
-    schedule_interval="@once",
+    schedule_interval=None,
     start_date=datetime(2026, 7, 10),
     catchup=False,
 ) as dag:
