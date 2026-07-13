@@ -1,7 +1,7 @@
 from datetime import datetime
 from dag_parser.dynamic.dag_context import DAG, PythonOperator, SmtpNotifier
 
-
+# DAG Fail Alert Not Working
 def succeed_task(**kwargs):
     return "i succeeded"
 
