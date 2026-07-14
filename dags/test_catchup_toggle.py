@@ -9,7 +9,7 @@ with DAG(
     dag_id="test_catchup_toggle",
     schedule_interval="@daily",
     start_date=datetime(2026, 7, 10),
-    catchup=False,
+    catchup=True,
 ) as dag:
 
     t1 = BashOperator(
