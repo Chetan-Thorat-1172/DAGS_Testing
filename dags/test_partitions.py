@@ -17,5 +17,5 @@ with DAG(
 
     t1 = BashOperator(
         task_id="process_partition",
-        bash_command="echo processing partition",
+        bash_command="exit 1",
     )
