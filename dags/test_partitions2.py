@@ -1,11 +1,9 @@
 from datetime import datetime
-
 from dag_parser.dynamic.dag_context import (
     DAG,
     BashOperator,
-    DailyPartition,
+    WeeklyPartition,
 )
-
 
 with DAG(
     dag_id="test_partitions2",
