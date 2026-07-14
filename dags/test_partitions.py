@@ -12,7 +12,7 @@ with DAG(
     schedule_interval="@daily",
     start_date=datetime(2026, 7, 10),
     catchup=True,
-    partitions=DailyPartition(),
+    partitions=WeeklyPartition(),
 ) as dag:
 
     t1 = BashOperator(
