@@ -23,4 +23,4 @@ with DAG(
         bash_command="echo finish",
     )
 
-    t1 >> t2
+    t1 >> t2 >> t3
