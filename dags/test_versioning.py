@@ -19,5 +19,10 @@ with DAG(
         task_id="step_2",
         bash_command="echo step2 && sleep 80",
     )
+
+    t3 = BashOperator(
+        task_id="stop",
+        bash_command="echo stop",
+    )
     
-    t1 >> t2
+    t1 >> t2 >> t3
