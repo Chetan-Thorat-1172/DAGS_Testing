@@ -10,12 +10,17 @@ with DAG(
 
     t1 = BashOperator(
         task_id="step_1",
-        bash_command="echo step1 && sleep 30",
+        bash_command="echo step1",
     )
 
     t2 = BashOperator(
         task_id="step_2",
-        bash_command="echo step2",
+        bash_command="sleep 150",
+    )
+
+    t3 = BashOperator(
+        task_id="finish",
+        bash_command="echo finish",
     )
 
     t1 >> t2
