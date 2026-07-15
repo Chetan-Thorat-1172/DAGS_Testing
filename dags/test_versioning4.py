@@ -25,7 +25,7 @@ with DAG(
         bash_command="echo step3",
     )
 
-   t4 = BashOperator(
+    t4 = BashOperator(
         task_id="stop",
         bash_command="echo step3",
     )
