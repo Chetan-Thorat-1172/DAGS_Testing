@@ -20,9 +20,4 @@ with DAG(
         bash_command="echo step2 && sleep 80",
     )
 
-    t3 = BashOperator(
-        task_id="stop",
-        bash_command="echo stop",
-    )
-
-    t1 >> t2 >> t3
+    t1 >> t2
