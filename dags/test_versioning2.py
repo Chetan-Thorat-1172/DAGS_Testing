@@ -18,9 +18,4 @@ with DAG(
         bash_command="sleep 150",
     )
 
-    t3 = BashOperator(
-        task_id="finish",
-        bash_command="echo finish",
-    )
-
-    t1 >> t2 >> t3
+    t1 >> t2
