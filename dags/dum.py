@@ -13,7 +13,7 @@ from datetime import datetime
 from dag_parser.dynamic.dag_context import DAG, BashOperator, SmtpNotifier
 
 with DAG(
-    dag_id="alert_sla_miss_email",
+    dag_id="ert",
     schedule=None,
     start_date=datetime(2026, 6, 15),
     catchup=False,
