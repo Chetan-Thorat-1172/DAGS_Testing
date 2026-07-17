@@ -2,7 +2,7 @@ from datetime import datetime
 
 with DAG(
     dag_id="test_sla",
-    schedule_interval="@daily",
+    schedule_interval=None,
     start_date=datetime(2026, 7, 13),
     expected_duration_seconds=10,  # DAG-level SLA: 10 seconds
     catchup=True,
