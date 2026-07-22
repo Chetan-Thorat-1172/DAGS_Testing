@@ -13,6 +13,16 @@ with DAG(
 ) as dag:
 
     t1 = BashOperator(
-        task_id="process",
+        task_id="extract",
         bash_command="echo hello",
     )
+    t2 = BashOperator(
+        task_id="transform",
+        bash_command="echo hello",
+    )
+    t3 = BashOperator(
+        task_id="Load",
+        bash_command="echo hello",
+    )
+
+    t1 >> t2 >> t3
