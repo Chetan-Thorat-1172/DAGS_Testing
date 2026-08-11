@@ -1,0 +1,15 @@
+name: maestro_dbt_smoke
+version: "1.0.0"
+config-version: 2
+
+# Databricks generates a profiles.yml for a dbt task when warehouse_id is set and
+# passes --profiles-dir to it. If this profile name does not match the generated
+# one, `dbt debug` in T11 will report the expected name and we correct it there
+# rather than guessing.
+profile: databricks
+
+model-paths: ["models"]
+
+models:
+  maestro_dbt_smoke:
+    +materialized: table
