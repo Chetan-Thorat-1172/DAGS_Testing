@@ -2,14 +2,21 @@ name: maestro_dbt_smoke
 version: "1.0.0"
 config-version: 2
 
-# Databricks generates a profiles.yml for a dbt task when warehouse_id is set and
-# passes --profiles-dir to it. If this profile name does not match the generated
-# one, `dbt debug` in T11 will report the expected name and we correct it there
-# rather than guessing.
+# Databricks generates the profiles.yml for a dbt task and passes --profiles-dir
+# to it. `dbt debug` confirmed it generates a profile named `databricks` with
+# target `databricks_cluster`, so this name is correct.
 profile: databricks
 
 model-paths: ["models"]
 
 models:
   maestro_dbt_smoke:
+    # The generated profile defaults `catalog` to hive_metastore. On a Unity
+    # Catalog workspace with legacy access turned off that fails at write time:
+    #
+    #   [UC_HIVE_METASTORE_DISABLED_EXCEPTION] The operation attempted to use Hive
+    #   Metastore, which is disabled due to legacy access being turned off
+    #
+    # The generated profile is not ours to edit, so the catalog is set here.
+    +catalog: main
     +materialized: table
