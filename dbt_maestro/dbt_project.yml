@@ -18,5 +18,5 @@ models:
     #   Metastore, which is disabled due to legacy access being turned off
     #
     # The generated profile is not ours to edit, so the catalog is set here.
-    +catalog: main
+    +catalog: maestro_pi
     +materialized: table
