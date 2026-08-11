@@ -9,14 +9,24 @@ profile: databricks
 
 model-paths: ["models"]
 
+# The generated profile connects with catalog=hive_metastore, which this workspace
+# blocks (legacy access off). We cannot edit that generated file, so the session
+# has to be moved into Unity Catalog from inside the project.
+#
+# on-run-start runs on dbt's *master* connection only. With `Concurrency: 8
+# threads` each model runs on its own connection, so this alone is not sufficient
+# — the per-model pre_hook below is the one that applies where the DDL happens.
+on-run-start:
+  - "use catalog maestro_pi"
+
 models:
   maestro_dbt_smoke:
-    # The generated profile defaults `catalog` to hive_metastore. On a Unity
-    # Catalog workspace with legacy access turned off that fails at write time:
-    #
-    #   [UC_HIVE_METASTORE_DISABLED_EXCEPTION] The operation attempted to use Hive
-    #   Metastore, which is disabled due to legacy access being turned off
-    #
-    # The generated profile is not ours to edit, so the catalog is set here.
+    # Controls the relation name: maestro_pi.default.maestro_smoke_model.
+    # Confirmed working — the run log shows dbt targeting exactly that.
     +catalog: maestro_pi
     +materialized: table
+    # Runs on the same connection as the model, so the CREATE TABLE and the
+    # schema handling around it resolve against Unity Catalog rather than falling
+    # back to the session's hive_metastore default.
+    +pre_hook:
+      - "use catalog maestro_pi"
