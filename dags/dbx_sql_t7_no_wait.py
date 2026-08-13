@@ -7,8 +7,10 @@ from dag_parser.dynamic.dag_context import DAG, DatabricksSQLStatementsOperator
 # itself finishes. statement_id must still be published, so a downstream task or
 # an operator could follow up on it.
 #
-# The statement is slow on purpose, so the gap between "task green" and "statement
-# finished" is unmistakable.
+# The statement uses sha2-512 over 2e9 rows so it genuinely runs for minutes,
+# making the gap between "task green" and "statement finished" unmistakable. It is
+# deliberately left running: nothing cancels it, which is the whole point of
+# fire-and-forget.
 with DAG(
     dag_id="databricks_sql_t7_no_wait",
     schedule=None,
@@ -24,9 +26,9 @@ with DAG(
         task_id="fire_and_forget",
         warehouse_id="3e52b555fe3ac722",
         statement="""
-            SELECT max(hash(a.id, b.id)) AS h
-            FROM range(0, 500000) a
-            CROSS JOIN range(0, 500) b
+            SELECT max(length(sha2(concat_ws('-', a.id, b.id), 512))) AS h
+            FROM range(0, 2000000) a
+            CROSS JOIN range(0, 1000) b
         """,
         wait_for_termination=False,
     )

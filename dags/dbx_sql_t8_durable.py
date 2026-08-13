@@ -3,8 +3,12 @@ from dag_parser.dynamic.dag_context import DAG, DatabricksSQLStatementsOperator
 
 # T8: durable reattach — the Codex fix, tested live.
 #
-# The statement runs for minutes, giving time to kill the worker mid-flight. With
-# retries=2 and durable=True (the default), attempt 2 must RECONNECT to the
+# The statement must still be running when the worker is killed, so it uses
+# sha2-512 over 2e9 rows: heavy enough to resist Photon's vectorisation and run for
+# minutes. (An earlier version used hash() and finished in 2.5 seconds, which left
+# no window to restart into.)
+#
+# With retries=2 and durable=True (the default), attempt 2 must RECONNECT to the
 # statement attempt 1 started rather than submitting a second one.
 #
 # Procedure:
@@ -17,8 +21,8 @@ from dag_parser.dynamic.dag_context import DAG, DatabricksSQLStatementsOperator
 #   - The task ends green on attempt 2.
 #   - databricks_statement_id is UNCHANGED between attempts.
 #   - Databricks query history shows ONE statement for this task, not two.
-#     Two would mean the same ~1e9-row scan was paid for twice, which is exactly
-#     what durable exists to prevent.
+#     Two would mean the same multi-billion-row scan was paid for twice, which is
+#     exactly what durable exists to prevent.
 with DAG(
     dag_id="databricks_sql_t8_durable",
     schedule=None,
@@ -40,8 +44,8 @@ with DAG(
         # as well as in query history.
         statement="""
             CREATE OR REPLACE TABLE durable_probe AS
-            SELECT max(hash(a.id, b.id)) AS h
-            FROM range(0, 1000000) a
+            SELECT max(length(sha2(concat_ws('-', a.id, b.id), 512))) AS h
+            FROM range(0, 2000000) a
             CROSS JOIN range(0, 1000) b
         """,
         durable=True,
