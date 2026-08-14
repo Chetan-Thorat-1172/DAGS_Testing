@@ -22,8 +22,8 @@ with DAG(
         warehouse_id="3e52b555fe3ac722",
         statement=(
             "CREATE OR REPLACE TABLE maestro_pi.maestro_sql_test.emp_validate AS "
-            "SELECT * FROM read_files('" + VOL + "', format => 'csv', header => 'true') "
-            "WHERE 1=0"
+            "SELECT * FROM read_files('" + VOL + "', format => 'csv', header => 'true', "
+            "inferColumnTypes => 'false') WHERE 1=0"
         ),
         poll_interval=5,
     )
