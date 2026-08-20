@@ -6,6 +6,7 @@ with DAG(
     start_date=datetime(2026, 7, 13),
     expected_duration_seconds=10,  # DAG-level SLA: 10 seconds
     catchup=True,
+    tags=["p_tester"],
     on_sla_miss_callback=SmtpNotifier(
         to=["Chetan.Thorat@Pibythree.com"],
         subject="SLA MISS: DAG {{ dag_id }}",
