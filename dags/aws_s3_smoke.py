@@ -1,16 +1,18 @@
-"""AWS S3 operator live smoke test.
+"""AWS S3 operator live smoke test (production-grade).
 
-Exercises all five S3 operators end-to-end against a real bucket, under a
-dedicated prefix, and cleans up after itself. Trigger manually.
+Exercises all five S3 operators end-to-end against a real bucket under a
+dedicated prefix, ASSERTS the read/list results (fails loudly on mismatch),
+and always cleans up (cleanup runs on all_done so objects never leak even if
+an upstream task fails). Trigger manually.
 
-Connection: create an "Amazon Web Services" connection named `aws_test`
-(Access Key auth, region us-east-1) in the Maestro UI first.
+Connection: an "Amazon Web Services" connection named `aws_test`.
 """
 
 from datetime import datetime
 
 from dag_parser.dynamic.dag_context import (
     DAG,
+    PythonOperator,
     S3CreateObjectOperator,
     S3ReadObjectOperator,
     S3CopyObjectOperator,
@@ -20,6 +22,38 @@ from dag_parser.dynamic.dag_context import (
 
 BUCKET = "maestro-pi-s3-test"
 PREFIX = "maestro-s3-test"
+EXPECTED_TEXT = "Hello from Maestro-pi S3 live test"
+EXPECTED_KEYS = {
+    f"{PREFIX}/hello.txt",
+    f"{PREFIX}/data.json.gz",
+    f"{PREFIX}/copy/hello.txt",
+}
+
+
+def verify_results(**kwargs):
+    """Assert the read content and the listed keys are exactly what we wrote.
+    Raises (fails the task) on any mismatch so the check actually bites."""
+    import json
+
+    ti = kwargs["ti"]
+
+    content = ti.xcom_pull(task_ids="read_object", key="return_value")
+    keys = ti.xcom_pull(task_ids="list_objects", key="return_value")
+    if isinstance(keys, str):
+        keys = json.loads(keys)
+
+    print(f"verify: read_object content = {content!r}", flush=True)
+    print(f"verify: list_objects keys   = {keys}", flush=True)
+
+    assert content == EXPECTED_TEXT, f"read mismatch: got {content!r}, want {EXPECTED_TEXT!r}"
+
+    got = set(keys)
+    missing = EXPECTED_KEYS - got
+    assert not missing, f"list missing keys: {sorted(missing)}; got {sorted(got)}"
+
+    print("verify: OK — read content and listed keys match", flush=True)
+    return "verified"
+
 
 with DAG(
     dag_id="aws_s3_smoke",
@@ -30,23 +64,20 @@ with DAG(
     tags=["aws", "s3"],
 ) as dag:
 
-    # 1. Create a plain UTF-8 object.
     create = S3CreateObjectOperator(
         task_id="create_object",
         s3_bucket=BUCKET,
         s3_key=f"{PREFIX}/hello.txt",
-        data="Hello from Maestro-pi S3 live test",
+        data=EXPECTED_TEXT,
         replace=True,
     )
 
-    # 2. Read it back into XCom (verify contents downstream).
     read = S3ReadObjectOperator(
         task_id="read_object",
         s3_bucket=BUCKET,
         s3_key=f"{PREFIX}/hello.txt",
     )
 
-    # 3. Create a gzip-compressed object.
     create_gzip = S3CreateObjectOperator(
         task_id="create_gzip",
         s3_bucket=BUCKET,
@@ -56,7 +87,6 @@ with DAG(
         replace=True,
     )
 
-    # 4. Copy the first object to a sub-prefix.
     copy = S3CopyObjectOperator(
         task_id="copy_object",
         source_bucket_name=BUCKET,
@@ -65,18 +95,24 @@ with DAG(
         dest_bucket_key=f"{PREFIX}/copy/hello.txt",
     )
 
-    # 5. List everything under the prefix (pushed to XCom as a JSON list).
     list_keys = S3ListOperator(
         task_id="list_objects",
         bucket=BUCKET,
         prefix=f"{PREFIX}/",
     )
 
-    # 6. Clean up: delete everything under the prefix via a prefix scan.
+    verify = PythonOperator(
+        task_id="verify",
+        python_callable=verify_results,
+    )
+
+    # all_done: always clean up, even if an upstream task (incl. verify) failed,
+    # so test objects never leak into the bucket.
     cleanup = S3DeleteObjectsOperator(
         task_id="delete_objects",
         bucket=BUCKET,
         prefix=f"{PREFIX}/",
+        trigger_rule="all_done",
     )
 
-    create >> read >> create_gzip >> copy >> list_keys >> cleanup
+    create >> read >> create_gzip >> copy >> list_keys >> verify >> cleanup
