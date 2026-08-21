@@ -53,7 +53,7 @@ def verify_results(**kwargs):
     print(f"verify: read_object content = {content!r}", flush=True)
     print(f"verify: list_objects keys   = {keys}", flush=True)
 
-    assert content == EXPECTED_TEXT + " (DELIBERATELY WRONG)", f"read mismatch: got {content!r}, want {EXPECTED_TEXT!r}"
+    assert content == EXPECTED_TEXT, f"read mismatch: got {content!r}, want {EXPECTED_TEXT!r}"
 
     got = set(keys)
     missing = EXPECTED_KEYS - got
