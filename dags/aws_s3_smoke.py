@@ -37,8 +37,10 @@ def verify_results(**kwargs):
 
     ti = kwargs["ti"]
 
-    content = ti.xcom_pull(task_ids="read_object", key="return_value")
-    keys = ti.xcom_pull(task_ids="list_objects", key="return_value")
+    # map_indexes=-1 targets the unmapped upstream XCom row. Without it, an
+    # unmapped puller defaults to "all" (mapped fan-in) and misses map_index=-1.
+    content = ti.xcom_pull(task_ids="read_object", key="return_value", map_indexes=-1)
+    keys = ti.xcom_pull(task_ids="list_objects", key="return_value", map_indexes=-1)
     if isinstance(keys, str):
         keys = json.loads(keys)
 
