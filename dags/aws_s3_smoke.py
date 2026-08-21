@@ -39,8 +39,14 @@ def verify_results(**kwargs):
 
     # map_indexes=-1 targets the unmapped upstream XCom row. Without it, an
     # unmapped puller defaults to "all" (mapped fan-in) and misses map_index=-1.
+    # XCom values come back JSON-encoded, so json.loads to get native types.
     content = ti.xcom_pull(task_ids="read_object", key="return_value", map_indexes=-1)
     keys = ti.xcom_pull(task_ids="list_objects", key="return_value", map_indexes=-1)
+    if isinstance(content, str):
+        try:
+            content = json.loads(content)
+        except (ValueError, TypeError):
+            pass
     if isinstance(keys, str):
         keys = json.loads(keys)
 
