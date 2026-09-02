@@ -80,4 +80,13 @@ with DAG(
         trigger_rule="none_failed_min_one_success",
     )
 
+    # The SAME join, but left on the default all_success. Watch what happens
+    # to it: one of its parents is skipped, so it can never be satisfied.
+    join_default = PythonOperator(
+        task_id="join_default_rule",
+        python_callable=join,
+        # trigger_rule not set -> all_success
+    )
+
     start_task >> branch >> [full, incremental] >> join_task
+    [full, incremental] >> join_default
