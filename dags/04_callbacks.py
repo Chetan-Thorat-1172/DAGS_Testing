@@ -14,7 +14,7 @@ from datetime import datetime
 
 from dag_parser.dynamic.dag_context import DAG, PythonOperator, SmtpNotifier
 
-TO = ["thoratc146@gmail.com"]
+TO = ["Chetan.Thorat@PibyThree.com"]
 
 
 def ok():
