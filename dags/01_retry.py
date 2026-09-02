@@ -22,8 +22,8 @@ with DAG(
         task_id="flaky_task",
         python_callable=flaky,
         provide_context=True,
-        retries=3,                          # 3 retries = 4 attempts in total
+        retries=2,                          # 2 retries = 3 attempts in total
         retry_delay_seconds=10,             # wait 10s...
-        retry_exponential_backoff=True,     # ...then 20s, then 40s
+        retry_exponential_backoff=True,     # ...then 20s
         max_retry_delay_seconds=60,         # never wait longer than this
     )
