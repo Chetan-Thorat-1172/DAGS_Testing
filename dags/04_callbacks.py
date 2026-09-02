@@ -39,8 +39,8 @@ with DAG(
                 "on_success_callback": {
                     "type": "email",
                     "to": TO,
-                    "subject": "OK: {{dag_id}}.{{task_id}}",
-                    "html_content": "<p>Run {{run_id}} finished on {{event}}.</p>",
+                    "subject": "OK: 04_callbacks.succeeds",
+                    "html_content": "<p>The succeeds task finished cleanly.</p>",
                 },
             }
         },
@@ -57,14 +57,14 @@ with DAG(
                 "on_retry_callback": {
                     "type": "email",
                     "to": TO,
-                    "subject": "RETRYING: {{dag_id}}.{{task_id}}",
+                    "subject": "RETRYING: 04_callbacks.flaky",
                     "html_content": "<p>Attempt failed, trying again.</p>",
                 },
                 "on_failure_callback": {
                     "type": "email",
                     "to": TO,
-                    "subject": "FAILED: {{dag_id}}.{{task_id}}",
-                    "html_content": "<p>Run {{run_id}} gave up.</p>",
+                    "subject": "FAILED: 04_callbacks.flaky",
+                    "html_content": "<p>The flaky task exhausted its retries.</p>",
                 },
             }
         },
