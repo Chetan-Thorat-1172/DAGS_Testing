@@ -1,15 +1,18 @@
 """Feature 21 - Per-task callbacks.
 
-A callback is 'tell someone what happened to THIS task', without adding a task
-to the graph. Four events: success, retry, failure, skipped.
+A callback answers 'tell someone what happened to THIS task', without adding a
+task to the graph. Four events: success, retry, failure, skipped.
 
-  succeeds  -> fires on_success
-  flaky     -> fails once (fires on_retry), then fails for good (fires on_failure)
+  succeeds  -> fires on_success_callback
+  flaky     -> fails once (fires on_retry_callback),
+               then fails for good (fires on_failure_callback ONCE)
+
+Note the callbacks are passed as operator kwargs, NOT inside params={...}.
 """
 
 from datetime import datetime
 
-from dag_parser.dynamic.dag_context import DAG, PythonOperator
+from dag_parser.dynamic.dag_context import DAG, PythonOperator, SmtpNotifier
 
 TO = ["thoratc146@gmail.com"]
 
@@ -34,16 +37,11 @@ with DAG(
     succeeds = PythonOperator(
         task_id="succeeds",
         python_callable=ok,
-        params={
-            "_callbacks": {
-                "on_success_callback": {
-                    "type": "email",
-                    "to": TO,
-                    "subject": "OK: 04_callbacks.succeeds",
-                    "html_content": "<p>The succeeds task finished cleanly.</p>",
-                },
-            }
-        },
+        on_success_callback=SmtpNotifier(
+            to=TO,
+            subject="OK - 04_callbacks.succeeds",
+            html_content="<p>The succeeds task finished cleanly.</p>",
+        ),
     )
 
     flaky = PythonOperator(
@@ -52,20 +50,14 @@ with DAG(
         provide_context=True,
         retries=1,                  # 2 attempts: one retry, then final failure
         retry_delay_seconds=5,
-        params={
-            "_callbacks": {
-                "on_retry_callback": {
-                    "type": "email",
-                    "to": TO,
-                    "subject": "RETRYING: 04_callbacks.flaky",
-                    "html_content": "<p>Attempt failed, trying again.</p>",
-                },
-                "on_failure_callback": {
-                    "type": "email",
-                    "to": TO,
-                    "subject": "FAILED: 04_callbacks.flaky",
-                    "html_content": "<p>The flaky task exhausted its retries.</p>",
-                },
-            }
-        },
+        on_retry_callback=SmtpNotifier(
+            to=TO,
+            subject="RETRYING - 04_callbacks.flaky",
+            html_content="<p>An attempt failed, trying again.</p>",
+        ),
+        on_failure_callback=SmtpNotifier(
+            to=TO,
+            subject="FAILED - 04_callbacks.flaky",
+            html_content="<p>The flaky task exhausted its retries.</p>",
+        ),
     )
