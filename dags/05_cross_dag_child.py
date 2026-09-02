@@ -3,6 +3,7 @@
 It can still be run on its own - which is the whole point of splitting a DAG.
 """
 
+import time
 from datetime import datetime
 
 from dag_parser.dynamic.dag_context import DAG, PythonOperator
@@ -12,6 +13,9 @@ def do_work(**context):
     # Whatever the parent put in conf= arrives here.
     batch_date = context["params"].get("batch_date", "<nothing was passed>")
     print(f"child running for batch_date = {batch_date}", flush=True)
+    # Deliberately slow, so the parent is visibly parked in 'waiting_for_child'.
+    time.sleep(25)
+    print("child done", flush=True)
 
 
 with DAG(
