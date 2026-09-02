@@ -1,12 +1,4 @@
-"""Feature 13 - Retry policy.
-
-One task that fails its first two attempts and succeeds on the third.
-Watch the Grid view: running -> up_for_retry -> running -> up_for_retry
--> running -> success, with the wait DOUBLING between attempts.
-"""
-
 from datetime import datetime
-
 from dag_parser.dynamic.dag_context import DAG, PythonOperator
 
 
@@ -22,9 +14,8 @@ with DAG(
     dag_id="01_retry",
     description="Feature 13 - retries and exponential backoff",
     schedule=None,
-    start_date=datetime(2026, 1, 1),
-    catchup=False,
-    tags=["session"],
+    start_date=datetime(2026, 9, 2),
+    catchup=False
 ) as dag:
 
     PythonOperator(
