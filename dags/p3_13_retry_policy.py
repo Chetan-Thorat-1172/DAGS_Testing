@@ -16,8 +16,10 @@ Trigger it manually from the UI and watch the Grid / Graph view.
 
 from datetime import datetime
 
-from dag_parser.dynamic.dag_context import DAG
-from dag_parser.dynamic.operators import PythonOperator
+# NOTE: import from dag_context, NOT dag_parser.dynamic.operators. The parser
+# sandbox tolerates the latter, but a Python task re-imports this module on the
+# worker at execution time, where only dag_context exists.
+from dag_parser.dynamic.dag_context import DAG, PythonOperator
 
 
 def succeeds_on_third_attempt(**context):
