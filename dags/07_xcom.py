@@ -6,10 +6,11 @@ little postbox they use to pass small values to each other.
     extract  ->  transform  ->  report
 
 extract   pushes one value explicitly, and RETURNS another (auto-pushed)
-transform pulls both, and shows the two traps
+transform pulls both, and walks straight into the two traps
 report    reads transform's return value
 """
 
+import json
 from datetime import datetime
 
 from dag_parser.dynamic.dag_context import DAG, PythonOperator
@@ -30,17 +31,24 @@ def transform(**context):
     wrong = ti.xcom_pull(task_ids="extract", key="row_count")
     print(f"without map_indexes=-1 -> {wrong!r}", flush=True)
 
-    # THE FIX
+    # FIX 1: map_indexes=-1 says "the normal, unmapped instance".
     count = ti.xcom_pull(task_ids="extract", key="row_count", map_indexes=-1)
     payload = ti.xcom_pull(task_ids="extract", key="return_value", map_indexes=-1)
     print(f"with    map_indexes=-1 -> {count!r} and {payload!r}", flush=True)
+
+    # TRAP 2: they come back JSON-ENCODED. count is the STRING '42', and
+    # payload is a string too - calling .get() on it raises AttributeError.
+    # FIX 2: decode them.
+    count = json.loads(count)
+    payload = json.loads(payload)
+    print(f"after json.loads   -> {count!r} and {payload!r}", flush=True)
 
     return {"rows_seen": count, "from_table": payload.get("table")}
 
 
 def report(**context):
     ti = context["ti"]
-    result = ti.xcom_pull(task_ids="transform", key="return_value", map_indexes=-1)
+    result = json.loads(ti.xcom_pull(task_ids="transform", key="return_value", map_indexes=-1))
     print(f"report got: {result!r}", flush=True)
 
 
