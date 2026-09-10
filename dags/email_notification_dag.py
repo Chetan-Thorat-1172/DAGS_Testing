@@ -22,10 +22,13 @@ with DAG(
     schedule=None,  # manual trigger only, while learning PI-Flow
 ) as dag:
 
-    send_piqlens_report = SnowflakeOperator(
+    bound_params = SQLExecuteQueryOperator(
         task_id="send_piqlens_report",
-        connection_id="snowflake_conn",  # <-- replace with your actual connection_id
+        connection_id="snowflake_conn",
         sql=f"""
             CALL PIQLENS_DQ_DB.PIQLENS_DQ.SEND_PIQLENS_HTML_REPORT('{RECIPIENT_EMAIL}');
         """,
     )
+    
+
+
