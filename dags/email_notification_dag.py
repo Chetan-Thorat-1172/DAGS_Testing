@@ -24,7 +24,7 @@ with DAG(
 
     bound_params = SQLExecuteQueryOperator(
         task_id="send_piqlens_report",
-        connection_id="snowflake_conn",
+        snowflake_conn_id="snowflake_conn",
         sql=f"""
             CALL PIQLENS_DQ_DB.PIQLENS_DQ.SEND_PIQLENS_HTML_REPORT('{RECIPIENT_EMAIL}');
         """,
