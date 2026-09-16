@@ -154,14 +154,16 @@ with DAG(
 
     clear_5 = truncate("clear_5", TARGET)
 
+    # copy_options and validation_mode are appended to the statement exactly as
+    # written, so each has to be the whole clause — `VALIDATION_MODE = ...`,
+    # not just the mode. Nothing is prepended for you.
     validate_only = CopyFromExternalStageToSnowflakeOperator(
         task_id="validate_only",
         table="COPYTEST_TARGET",
         stage="COPYTEST_STAGE",
         prefix="good/",
         file_format="COPYTEST_CSV",
-        validation_mode="RETURN_2_ROWS",
-        copy_options="FORCE=TRUE",
+        validation_mode="VALIDATION_MODE = RETURN_2_ROWS",
         **SESSION,
     )
 
