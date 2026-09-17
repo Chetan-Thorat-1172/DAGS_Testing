@@ -94,11 +94,21 @@ with DAG(
         do_xcom_push=False,
     )
 
+    # A `files` entry is appended to the stage's location VERBATIM, so it only
+    # resolves against a directory if the stage URL ends with a slash. This
+    # stage's URL is `s3://maestro-pi-s3-test/copytest` with no trailing slash,
+    # so `files=["good/part1.csv"]` asks for `.../copytestgood/part1.csv` and
+    # Snowflake reports the file as missing.
+    #
+    # Putting the directory in `prefix` and only the file name in `files` works
+    # whatever the stage URL looks like, because the operator writes the
+    # separator itself: `FROM @STAGE/good/`.
     load_named_file = CopyFromExternalStageToSnowflakeOperator(
         task_id="load_named_file",
         table="COPYTEST_TARGET",
         stage="COPYTEST_S3_STAGE",
-        files=["good/part1.csv"],
+        prefix="good/",
+        files=["part1.csv"],
         file_format="COPYTEST_CSV",
         copy_options="FORCE=TRUE",
         **SESSION,
