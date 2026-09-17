@@ -20,6 +20,7 @@ from dag_parser.dynamic.dag_context import (
     PythonOperator,
     SnowflakeCortexAgentOperator,
 )
+from dag_parser.dynamic.params import Param
 
 CONN = "snowflake_conn"
 AGENT = {"database": "DEMO", "schema": "PUBLIC", "agent_name": "TEST_AGENT"}
@@ -33,7 +34,8 @@ def report(**context):
     """Print each response whole, so the payload shape is on the record."""
     ti = context["ti"]
 
-    for task_id in ("basic", "with_instructions", "with_models", "with_timeout"):
+    for task_id in ("basic", "with_instructions", "with_models", "with_timeout",
+                    "templated_messages"):
         raw = ti.xcom_pull(task_ids=task_id, key="return_value")
         print(f"===== {task_id} =====")
         print(f"raw type: {type(raw).__name__}, {len(raw) if raw else 0} chars")
@@ -75,6 +77,14 @@ with DAG(
     start_date=datetime(2026, 1, 1),
     schedule=None,
     default_args={"snowflake_conn_id": CONN},
+    params={
+        # A whole-value template for messages: the JSON the agent receives.
+        "turns": Param(
+            "string",
+            default='[{"role":"user","content":[{"type":"text","text":"Reply with: templated"}]}]',
+            title="Conversation, as JSON",
+        ),
+    },
 ) as dag:
 
     # The plain case: one question, one answer.
@@ -109,7 +119,15 @@ with DAG(
         **AGENT,
     )
 
-    [basic, with_instructions, with_models, with_timeout] >> PythonOperator(
+    # messages is the field the reference marks templated, so a whole-value
+    # template has to work. After rendering it is a string holding JSON.
+    templated = SnowflakeCortexAgentOperator(
+        task_id="templated_messages",
+        messages="{{ .Params.turns }}",
+        **AGENT,
+    )
+
+    [basic, with_instructions, with_models, with_timeout, templated] >> PythonOperator(
         task_id="report",
         python_callable=report,
         provide_context=True,
