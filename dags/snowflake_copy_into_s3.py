@@ -44,6 +44,16 @@ with DAG(
         show_return_value_in_logs=True,
     )
 
+    # The stage's URL decides how a `files` entry carrying a path is resolved:
+    # Snowflake appends the entry to the URL verbatim, so a URL without a
+    # trailing slash produces `.../copytestgood/part1.csv` rather than
+    # `.../copytest/good/part1.csv`.
+    describe_stage = SQLExecuteQueryOperator(
+        task_id="describe_s3_stage",
+        sql="DESC STAGE DEMO.PUBLIC.COPYTEST_S3_STAGE",
+        show_return_value_in_logs=True,
+    )
+
     clear = SQLExecuteQueryOperator(
         task_id="clear",
         sql=f"TRUNCATE TABLE {TARGET}",
@@ -102,7 +112,7 @@ with DAG(
     )
 
     (
-        list_stage
+        list_stage >> describe_stage
         >> clear >> load_from_s3 >> check_loaded >> check_first_row
         >> clear_2 >> load_named_file >> check_named
     )
