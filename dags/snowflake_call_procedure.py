@@ -49,7 +49,7 @@ def verify(**context):
 with DAG(
     dag_id="snowflake_call_procedure",
     description="Calls Snowflake stored procedures via SQLExecuteQueryOperator",
-    tags=["livetest", "snowflake"],
+    tags=["livetest", "snowflake", "rbac_test"],
     start_date=datetime(2026, 1, 1),
     schedule=None,
     default_args={"snowflake_conn_id": CONN},
